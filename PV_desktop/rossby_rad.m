@@ -1,0 +1,225 @@
+% far-field vertical cross sections 
+
+pi      = 3.1417;
+g       = 9.81;
+
+T       = 3600;             %   secs. Heating cut-off time
+Nc      = 30;               %   Number of contours in display
+Scalar  = 10;                %   20 Mode scaling with height : after SDG remark
+sigma   = 1;
+N1      = 0.01;             %   Based on dry lapse rate of 10 deg per km (notes)
+%N2      = 0.01;
+HV_bar  = 1.0;              %   relative visualisation height
+Ht_bar  = 1.0;              %   relative heating height
+%R_spec  = 8.314/28.0013E-3; %   SPECIFIC gas constant based upon nitrogen
+theta_0 = 273;
+Q0      = 3.6 * 10^-5;
+
+%
+%%%
+%
+HL_bar  = 50.0;               %   Relative lid height
+HV_bar  = 1.0;
+mmax    = Scalar * HL_bar;  %   max number of modes scales with lid height
+f       = 0.0005;
+[xx, zz, pp, vv, bb, ss, rho_var, dx, dz, x, c1, s1 ] = Harness2 ( HL_bar , HV_bar, Ht_bar, T, mmax, sigma, N1, f );
+pp1_right = pp * Q0;
+vv1_right = vv* Q0;
+bb1_right = bb* Q0;
+
+pp1_left  = fliplr(pp * Q0); 
+vv1_left  = fliplr(- vv * Q0); 
+bb1_left  = fliplr(bb * Q0); 
+
+pp1_total = horzcat(pp1_left,pp1_right);
+vv1_total = horzcat(vv1_left,vv1_right);
+bb1_total = horzcat(bb1_left,bb1_right);
+
+% calculate PV' from expression in paper.
+z_trop  = [0:dx:Ht_bar];
+[xx_trop,zz_trop] = meshgrid(x,z_trop); 
+scaled_PV_trop = Q0 * f * T * pi / Ht_bar / N1 / N1 .* exp( - xx_trop .* xx_trop ./ 2);
+scaled_PV_trop = scaled_PV_trop .* cos( pi .* zz_trop ./ Ht_bar);
+
+z_strat = [Ht_bar:dz:HL_bar];
+[xx_strat,zz_strat] = meshgrid(x,z_strat); 
+scaled_PV_strat = zz_strat;
+
+scaled_PV = [scaled_PV_trop;scaled_PV_strat];
+scaled_PV = scaled_PV_trop + 2 .* f .* bb1_right ./ g;
+
+% format
+PV1_right  = scaled_PV;
+PV1_left   = fliplr(scaled_PV);
+PV1_total  = horzcat(PV1_left,PV1_right);
+
+% remove scaling
+rho_var_right  = rho_var;
+rho_var_left   = fliplr(rho_var);
+rho_var_total  = horzcat(rho_var_left,rho_var_right); 
+PV1_total      = rho_var_total .* PV1_total ./ theta_0;
+
+%
+%%%
+%
+HL_bar  = 50;               %   Relative lid height
+f       = 0.0001;
+mmax    = Scalar * HL_bar;  %   max number of modes scales with lid height
+[xx, zz, pp, vv, bb, ss, rho_var, dx, dz, x, c1, s1 ] = Harness2 ( HL_bar , HV_bar, Ht_bar, T, mmax, sigma, N1, f );
+pp2_right = pp * Q0;
+vv2_right = vv  * Q0;
+bb2_right = bb * Q0;
+
+pp2_left  = fliplr(pp * Q0 ); 
+vv2_left  = fliplr(- vv * Q0); 
+bb2_left  = fliplr(bb * Q0 ); 
+
+pp2_total = horzcat(pp2_left,pp2_right);
+vv2_total = horzcat(vv2_left,vv2_right);
+bb2_total = horzcat(bb2_left,bb2_right);
+
+% calculate PV' from expression in paper.
+z_trop  = [0:dx:Ht_bar];
+[xx_trop,zz_trop] = meshgrid(x,z_trop); 
+scaled_PV_trop = Q0 * f * T * pi / Ht_bar / N1 / N1 .* exp( - xx_trop .* xx_trop ./ 2);
+scaled_PV_trop = scaled_PV_trop .* cos( pi .* zz_trop ./ Ht_bar);
+
+z_strat = [Ht_bar+dz:dz:HV_bar];
+[xx_strat,zz_strat] = meshgrid(x,z_strat); 
+scaled_PV_strat = zz_strat - zz_strat;
+
+scaled_PV_2 = [scaled_PV_trop;scaled_PV_strat];
+scaled_PV_2 = scaled_PV_2 + 2 .* f .* bb2_right ./ g;
+
+
+% format
+PV2_right  = scaled_PV_2;
+PV2_left   = fliplr(scaled_PV_2);
+PV2_total  = horzcat(PV2_left,PV2_right);
+
+% remove scaling
+rho_var_right  = rho_var;
+rho_var_left   = fliplr(rho_var);
+rho_var_total  = horzcat(rho_var_left,rho_var_right); 
+PV2_total      = rho_var_total .* PV2_total ./ theta_0;
+
+%
+%%%
+%
+
+HL_bar  = 50;               %   Relative lid height
+f       = 0.00002;
+mmax    = Scalar * HL_bar;  %   max number of modes scales with lid height
+[xx, zz, pp, vv, bb, ss, rho_var, dx, dz, x, c1, s1 ] = Harness2 ( HL_bar , HV_bar, Ht_bar, T, mmax, sigma, N1, f );
+pp3_right = pp * Q0;
+vv3_right = vv  * Q0;
+bb3_right = bb * Q0;
+
+pp3_left  = fliplr(pp * Q0 ); 
+vv3_left  = fliplr(- vv * Q0); 
+bb3_left  = fliplr(bb * Q0 ); 
+
+pp3_total = horzcat(pp3_left,pp3_right);
+vv3_total = horzcat(vv3_left,vv3_right);
+bb3_total = horzcat(bb3_left,bb3_right);
+
+% calculate PV' from expression in paper.
+z_trop  = [0:dx:Ht_bar];
+[xx_trop,zz_trop] = meshgrid(x,z_trop); 
+scaled_PV_trop = Q0 * f * T * pi / Ht_bar / N1 / N1 .* exp( - xx_trop .* xx_trop ./ 2);
+scaled_PV_trop = scaled_PV_trop .* cos( pi .* zz_trop ./ Ht_bar);
+
+z_strat = [Ht_bar+dz:dz:HV_bar];
+[xx_strat,zz_strat] = meshgrid(x,z_strat); 
+scaled_PV_strat = zz_strat - zz_strat;
+
+scaled_PV_3 = [scaled_PV_trop;scaled_PV_strat];
+scaled_PV_3 = scaled_PV_3 + 2 .* f .* bb3_right ./ g;
+
+
+% format
+PV3_right  = scaled_PV_3;
+PV3_left   = fliplr(scaled_PV_3);
+PV3_total  = horzcat(PV3_left,PV3_right);
+
+% remove scaling
+rho_var_right  = rho_var;
+rho_var_left   = fliplr(rho_var);
+rho_var_total  = horzcat(rho_var_left,rho_var_right); 
+PV3_total      = rho_var_total .* PV3_total ./ theta_0;
+
+
+HL_bar  = 50;               %   Relative lid height
+f       = 0.000004;
+mmax    = Scalar * HL_bar;  %   max number of modes scales with lid height
+[xx, zz, pp, vv, bb, ss, rho_var, dx, dz, x, c1, s1 ] = Harness2 ( HL_bar , HV_bar, Ht_bar, T, mmax, sigma, N1, f );
+pp4_right = pp * Q0;
+vv4_right = vv  * Q0;
+bb4_right = bb * Q0;
+
+pp4_left  = fliplr(pp * Q0 ); 
+vv4_left  = fliplr(- vv * Q0); 
+bb4_left  = fliplr(bb * Q0 ); 
+
+pp4_total = horzcat(pp4_left,pp4_right);
+vv4_total = horzcat(vv4_left,vv4_right);
+bb4_total = horzcat(bb4_left,bb4_right);
+
+% calculate PV' from expression in paper.
+z_trop  = [0:dx:Ht_bar];
+[xx_trop,zz_trop] = meshgrid(x,z_trop); 
+scaled_PV_trop = Q0 * f * T * pi / Ht_bar / N1 / N1 .* exp( - xx_trop .* xx_trop ./ 2);
+scaled_PV_trop = scaled_PV_trop .* cos( pi .* zz_trop ./ Ht_bar);
+
+z_strat = [Ht_bar+dz:dz:HV_bar];
+[xx_strat,zz_strat] = meshgrid(x,z_strat); 
+scaled_PV_strat = zz_strat - zz_strat;
+
+scaled_PV_4 = [scaled_PV_trop;scaled_PV_strat];
+scaled_PV_4 = scaled_PV_4 + 2 .* f .* bb4_right ./ g;
+
+
+% format
+PV4_right  = scaled_PV_4;
+PV4_left   = fliplr(scaled_PV_4);
+PV4_total  = horzcat(PV4_left,PV4_right);
+
+% remove scaling
+rho_var_right  = rho_var;
+rho_var_left   = fliplr(rho_var);
+rho_var_total  = horzcat(rho_var_left,rho_var_right); 
+PV4_total      = rho_var_total .* PV4_total ./ theta_0;
+
+
+
+
+
+
+
+
+
+x2 = horzcat(x, x);
+
+figure(1)
+plot(PV4_total(75,:),'g','linewidth',2)
+hold on
+plot(PV3_total(75,:),'b','linewidth',2)
+plot(PV2_total(75,:),'k','linewidth',2)
+plot(PV1_total(75,:),'r','linewidth',2)
+ylabel('z(km)')
+set(gca,'xtick',[4500:250:5500],'xticklabel',[-5:2.5:5])
+xlabel('x(km)')
+xlim([4500 5500])
+ylim([-5e-3 1e-3])
+caxis([-0.001 0.001])
+grid on
+legend('f = 4x10^{-6}','f = 2x10^{-5}','f = 1x10^{-4}','f = 5x10^{-4}')
+
+
+
+
+
+
+
+
+

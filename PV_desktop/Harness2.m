@@ -15,7 +15,7 @@ i        = complex(0,1);
 % z        = [0:dz:HV_bar ];
 
 dx       = 0.01;               % x-step
-dz       = 0.015;              % z-step
+dz       = 0.01;              % z-step
 x        = [0:dx:50 ];         % x = 10 equivalent to 10 * \sigma (FWHM, PB F(x) )
 z        = [0:dz:HV_bar ];
 [xx,zz]  = meshgrid( x, z);
